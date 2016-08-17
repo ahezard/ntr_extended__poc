@@ -28,6 +28,11 @@
 
 ---------------------------------------------------------------------------------*/
 #include <nds.h>
+#include "../../share/fifotool.h"
+
+unsigned int * SCFG_ROM=	(unsigned int*)0x4004000;
+unsigned int * SCFG_CLK=	(unsigned int*)0x4004004; 
+unsigned int * SCFG_EXT=	(unsigned int*)0x4004008;
 
 //---------------------------------------------------------------------------------
 void VblankHandler(void) {
@@ -48,6 +53,39 @@ volatile bool exitflag = false;
 void powerButtonCB() {
 //---------------------------------------------------------------------------------
 	exitflag = true;
+}
+
+static void myFIFOValue32Handler(u32 value,void* data)
+{
+  nocashMessage("myFIFOValue32Handler");
+
+  switch(value)
+  {
+    case MSG_SCFG_ROM:
+	  nocashMessage("MSG_SCFG_ROM");
+	  swiDelay(100);
+	  nocashMessage("fifoSendValue32");
+      fifoSendValue32(FIFO_USER_02,*SCFG_ROM);	 
+      break;
+    case MSG_SCFG_CLK:
+	  nocashMessage("MSG_SCFG_CLK");
+	  swiDelay(100);
+	  nocashMessage("fifoSendValue32");
+	  fifoSendValue32(FIFO_USER_02,*SCFG_CLK);	  
+      break;
+    case MSG_SCFG_EXT:
+	  nocashMessage("MSG_SCFG_EXT");
+	  swiDelay(100);
+	  nocashMessage("fifoSendValue32");
+	  fifoSendValue32(FIFO_USER_02,*SCFG_EXT);
+      break;
+    default:
+      nocashMessage("default");
+	  swiDelay(100);
+	  nocashMessage("fifoSendValue32");
+	  fifoSendValue32(FIFO_USER_02,value);
+      break;
+  }
 }
 
 //---------------------------------------------------------------------------------
@@ -86,9 +124,7 @@ int main() {
 
 	setPowerButtonCB(powerButtonCB);	
 	
-	unsigned int * SCFG_ROM=	(unsigned int*)0x4004000;
-	unsigned int * SCFG_CLK=	(unsigned int*)0x4004004; 
-	unsigned int * SCFG_EXT=	(unsigned int*)0x4004008;
+
 	
 	//unsigned int * SCFG_ROM=			(unsigned int*)0x4004000;
 	//unsigned int * SCFG_EXT=			(unsigned int*)0x4004008;
@@ -96,6 +132,10 @@ int main() {
 	//unsigned int * SCFG_EXT_ARM7_COPY=  (unsigned int*)0x2370008;
 	//*SCFG_ROM_ARM7_COPY = *SCFG_ROM;
 	//*SCFG_EXT_ARM7_COPY = *SCFG_EXT;
+	
+	fifoSetValue32Handler(FIFO_USER_01,myFIFOValue32Handler,0);
+	
+	//fifoSendValue32(FIFO_USER_01,MSG_SCFG_READY);
 	
 
 	// Keep the ARM7 mostly idle
