@@ -59,38 +59,27 @@ static void myFIFOValue32Handler(u32 value,void* data)
 {
   nocashMessage("myFIFOValue32Handler");
 
-  switch(value)
-  {
-    case MSG_SCFG_ROM:
-	  nocashMessage("MSG_SCFG_ROM");
-	  swiDelay(100);
-	  nocashMessage("fifoSendValue32");
-      fifoSendValue32(FIFO_USER_02,*SCFG_ROM);	 
-      break;
-    case MSG_SCFG_CLK:
-	  nocashMessage("MSG_SCFG_CLK");
-	  swiDelay(100);
-	  nocashMessage("fifoSendValue32");
-	  fifoSendValue32(FIFO_USER_02,*SCFG_CLK);	  
-      break;
-    case MSG_SCFG_EXT:
-	  nocashMessage("MSG_SCFG_EXT");
-	  swiDelay(100);
-	  nocashMessage("fifoSendValue32");
-	  fifoSendValue32(FIFO_USER_02,*SCFG_EXT);
-      break;
-    default:
-      nocashMessage("default");
-	  swiDelay(100);
-	  nocashMessage("fifoSendValue32");
-	  fifoSendValue32(FIFO_USER_02,value);
-      break;
-  }
+  nocashMessage("default");
+  nocashMessage("fifoSendValue32");
+  fifoSendValue32(FIFO_USER_02,*((unsigned int*)value));	
+
 }
 
 //---------------------------------------------------------------------------------
 int main() {
 //---------------------------------------------------------------------------------
+	// SCFG_EXT
+	// 0x92A00000 : NTR
+	// 0x93FFFF07 : TWL
+	// 0x93FF0F07 : max accessible in NTR mode
+	*SCFG_EXT = 0x93FFFF07;
+	
+	// SCFG_CLK
+	// 0x0180 : NTR
+	// 0x0187 : TWL
+	// 
+	*SCFG_CLK = 0x0187;
+	
     nocashMessage("ARM7 main.c main");
 	// clear sound registers
 	dmaFillWords(0, (void*)0x04000400, 0x100);

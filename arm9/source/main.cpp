@@ -11,6 +11,10 @@
 #include "nds/arm9/console.h"
 #include "../../share/fifotool.h"
 
+unsigned int * SCFG_ROM=	(unsigned int*)0x4004000;
+unsigned int * SCFG_CLK=	(unsigned int*)0x4004004; 
+unsigned int * SCFG_EXT=	(unsigned int*)0x4004008;
+
 //---------------------------------------------------------------------------------
 void dopause() {
 //---------------------------------------------------------------------------------
@@ -51,17 +55,22 @@ void getSFCG_ARM7() {
 	iprintf( "SCFG_ROM ARM7\n" );
 
 	nocashMessage("fifoSendValue32(FIFO_USER_01,MSG_SCFG_ROM);\n");	
-	fifoSendValue32(FIFO_USER_01,MSG_SCFG_ROM);	
-	
+	fifoSendValue32(FIFO_USER_01,(long unsigned int)SCFG_ROM);	
+		  
 	iprintf( "SCFG_CLK ARM7\n" );
 	
 	nocashMessage("fifoSendValue32(FIFO_USER_01,MSG_SCFG_CLK);\n");	
-	fifoSendValue32(FIFO_USER_01,MSG_SCFG_CLK);
+	fifoSendValue32(FIFO_USER_01,(long unsigned int)SCFG_CLK);
 	
 	iprintf( "SCFG_EXT ARM7\n" );
 	
 	nocashMessage("fifoSendValue32(FIFO_USER_01,MSG_SCFG_EXT);\n");	
-	fifoSendValue32(FIFO_USER_01,MSG_SCFG_EXT);
+	fifoSendValue32(FIFO_USER_01,(long unsigned int)SCFG_EXT);
+	
+	iprintf( "SCFG_EXT ARM7\n" );
+	
+	nocashMessage("fifoSendValue32(FIFO_USER_01,MSG_SCFG_EXT);\n");	
+	fifoSendValue32(FIFO_USER_01,(long unsigned int)SCFG_EXT);
 
 }
 
@@ -78,9 +87,7 @@ int main(void) {
 	
 	defaultExceptionHandler();
 	
-	unsigned int * SCFG_ROM=	(unsigned int*)0x4004000;
-	unsigned int * SCFG_CLK=	(unsigned int*)0x4004004; 
-	unsigned int * SCFG_EXT=	(unsigned int*)0x4004008;
+
 	
 	iprintf( "SCFG_ROM ARM9 %x\n", *SCFG_ROM ); // DS MODE 80	
 	iprintf( "SCFG_CLK ARM9 %x\n", *SCFG_CLK ); // DS MODE 80
